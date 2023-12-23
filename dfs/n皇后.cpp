@@ -1,46 +1,59 @@
 #include <bits/stdc++.h>
 using namespace std;
+// n皇后
+// 皇后可以在横、竖、斜线上不限步数地吃掉其他棋子
 int n;
-int sum = 0;
-// 棋盘
-int a[1000];
-// int a[1000][1000];
+int cnt = 0;
 int Chess[100] = {0};
-// 此布局皇后能否互相吃到
-bool is_ok(int i){
-    for(int k = i-1; k >= 0; k--){
-        if(a[i] == a[k] || abs(a[i] - a[k]) == i-k){
+// Chess-棋盘上皇后的分布，每一行的皇后在第几列
+void Print(int a[])
+{
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << a[i] << " ";
+    }
+    cout << endl;
+}
+bool isOK(int k)
+{
+    // 对于第k行i列新放置的皇后 来检验棋盘布局是否合理
+    // 1. 同一行、列无皇后
+    // 2. 两个斜线上无皇后
+    for (int i = k - 1; i >= 0; i--)
+    {
+        if (Chess[i] == Chess[k] || abs(Chess[i] - Chess[k]) == k - i)
+        {
             return false;
         }
     }
     return true;
 }
-
-void search(int n, int i){
-    //若i大于行数，布局完成，打印结果
-    if(i >= n){
-        sum++;
-        for(int j = 0; j < n; j++){
-            cout<<a[j]<<" ";
-        }
-        cout<<endl;
-        
+void dfs(int k)
+{
+    // k为行数
+    if (k >= n)
+    {
+        cnt++;
+        Print(Chess);
     }
-    else{
-        for(int j = 0; j < n; j++){
-            a[i] = j+1;
-            if(is_ok(i)){
-                search(n, i+1);
+    else
+    {
+        for (int i = 1; i <= n; i++)
+        {
+            Chess[k] = i; // k行的第i列放置皇后
+            if (isOK(k))
+            {
+                dfs(k + 1);
             }
-            a[i] = 0;
+            Chess[k] = 0;
+            // 回溯
         }
     }
 }
-
 int main()
 {
-    cin>>n;
-    search(n, 0);
-    cout<<sum;
-    return 0;
+    cin >> n;
+    dfs(0);
+    cout << cnt;
 }
